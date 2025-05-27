@@ -1,7 +1,7 @@
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Epic extends Task {
+    private ArrayList<Integer> subtasks = new ArrayList<>();
     public Epic(String name, String description) {
         super(name, description);
     }
@@ -10,28 +10,15 @@ public class Epic extends Task {
         super(name, description, status);
     }
 
-    public TaskStatus getSubtasksStatus(HashMap<Integer, Subtask> subtasks) {
-        if (subtasks.isEmpty()) {
-            return TaskStatus.NEW;
-        }
+    public ArrayList<Integer> getSubtasks() {
+        return subtasks;
+    }
 
-        int newStatusCount = 0;
-        int doneStatusCount = 0;
+    public void setSubtasks(ArrayList<Integer> subtasks) {
+        this.subtasks = subtasks;
+    }
 
-        for (Subtask subtask : subtasks.values()) {
-            if (subtask.getStatus() == TaskStatus.NEW) {
-                newStatusCount++;
-            } else if (subtask.getStatus() == TaskStatus.DONE) {
-                doneStatusCount++;
-            }
-        }
-
-        if (newStatusCount == subtasks.size()) {
-            return TaskStatus.NEW;
-        } else if (doneStatusCount == subtasks.size()) {
-            return TaskStatus.DONE;
-        }
-
-        return TaskStatus.IN_PROGRESS;
+    public void clearSubtasks() {
+        subtasks.clear();
     }
 };
