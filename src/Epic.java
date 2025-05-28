@@ -18,6 +18,11 @@ public class Epic extends Task {
         this.subtasks = subtasks;
     }
 
+    public void removeSubtask(int id) {
+        int index = subtasks.indexOf(id);
+        this.subtasks.remove(index);
+    }
+
     public void clearSubtasks() {
         subtasks.clear();
     }
