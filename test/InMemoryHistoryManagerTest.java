@@ -1,9 +1,10 @@
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
-
 import java.util.ArrayList;
-
 import static org.junit.jupiter.api.Assertions.*;
+import manager.HistoryManager;
+import manager.InMemoryHistoryManager;
+import model.Task;
 
 class InMemoryHistoryManagerTest {
     HistoryManager historyManager;

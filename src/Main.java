@@ -1,3 +1,10 @@
+import manager.Managers;
+import manager.TaskManager;
+import model.Task;
+import model.Subtask;
+import model.Epic;
+import model.TaskStatus;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -62,7 +69,7 @@ public class Main {
         }
 
         System.out.println("История:");
-        for (Task task : manager.getHistoryManager().getHistory()) {
+        for (Task task : manager.getHistory()) {
             System.out.println(task);
         }
     }

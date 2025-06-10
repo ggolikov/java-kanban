@@ -1,7 +1,8 @@
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
-
+import manager.Managers;
+import manager.TaskManager;
 
 class ManagersTest {
     private TaskManager taskManager;
@@ -17,6 +18,6 @@ class ManagersTest {
 
     @Test
     void createdTaskManagerShouldHaveEmptyHistory() {
-        assertEquals(0, taskManager.getHistoryManager().getHistory().size());
+        assertEquals(0, taskManager.getHistory().size());
     }
 }
