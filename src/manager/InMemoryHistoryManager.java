@@ -20,6 +20,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void remove(int id) {
+        history.removeTask(id);
     }
 
     @Override
@@ -31,6 +32,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 class FastLinkedList {
     private final LinkedList<Node<Task>> tasks = new LinkedList<>();
     private final HashMap<Integer, Node<Task>> tasksMap = new HashMap<>();
+
     public void linkLast(Task task) {
         // existing
         int id = task.getId();
@@ -41,11 +43,10 @@ class FastLinkedList {
         tasks.addLast(node);
     }
 
-
     public void removeTask(int id) {
         if (tasksMap.containsKey(id)) {
             Node<Task> existingNode = tasksMap.get(id);
-            // tasksMap.remove(id);
+            tasksMap.remove(id);
 
             tasks.remove(existingNode);
         }
