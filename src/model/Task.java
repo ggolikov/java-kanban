@@ -13,7 +13,7 @@ public class Task {
         this.description = description;
         this.status = TaskStatus.NEW;
     }
-    
+
     public Task(String name, String description, TaskStatus status) {
         this(name, description);
         this.status = status;
