@@ -3,7 +3,6 @@ import manager.TaskManager;
 import model.Task;
 import model.Subtask;
 import model.Epic;
-import model.TaskStatus;
 
 public class Main {
 
@@ -11,8 +10,8 @@ public class Main {
         TaskManager taskManager = Managers.getDefault();
         Task task1 = new Task("Task 1", "Task 1");
         Task task2 = new Task("Task 2", "Task 2");
-        Epic epic1  = new Epic("Epic 1", "Epic 1");
-        Epic epic2  = new Epic("Epic 2", "Epic 2");
+        Epic epic1 = new Epic("Epic 1", "Epic 1");
+        Epic epic2 = new Epic("Epic 2", "Epic 2");
         taskManager.addTask(task1);
         taskManager.addTask(task2);
         taskManager.addEpic(epic1);
