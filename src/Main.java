@@ -32,7 +32,7 @@ public class Main {
         taskManager.getTask(task2.getId());
         taskManager.getEpic(epic1.getId());
         // taskManager.getSubtask(subtask1.getId());
-
+        taskManager.clearSubtasks();
 
         printAllTasks(taskManager);
     }
