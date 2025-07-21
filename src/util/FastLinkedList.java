@@ -4,7 +4,6 @@ import model.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 
 public class FastLinkedList {
     private final HashMap<Integer, Node<Task>> tasksMap = new HashMap<>();
