@@ -39,13 +39,16 @@ public class FastLinkedList {
             if (prev != null) {
                 if (next != null) {
                     prev.next = next;
+                    next.prev = prev;
                 } else {
                     last = prev;
                     prev.next = null;
                 }
             } else {
-                head = next;
-                next.prev = null;
+                if (next != null) {
+                    head = next;
+                    next.prev = null;
+                }
             }
 
             tasksMap.remove(id);
@@ -55,8 +58,11 @@ public class FastLinkedList {
     public ArrayList<Task> getTasks() {
         ArrayList<Task> list = new ArrayList<>();
 
-        for (Node<Task> node : tasksMap.values()) {
+        Node<Task> node = head;
+
+        while (node != null) {
             list.add(node.data);
+            node = node.next;
         }
 
         return list;

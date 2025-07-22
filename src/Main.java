@@ -23,6 +23,7 @@ public class Main {
 
         /* HISTORY */
         taskManager.getTask(task1.getId());
+        taskManager.getTask(task1.getId());
         taskManager.getTask(task2.getId());
 
         taskManager.getSubtask(subtask1.getId());
