@@ -13,6 +13,7 @@ public class Task {
         this.description = description;
         this.status = TaskStatus.NEW;
     }
+
     public Task(String name, String description, TaskStatus status) {
         this(name, description);
         this.status = status;
@@ -45,6 +46,7 @@ public class Task {
     public TaskStatus getStatus() {
         return status;
     }
+
     public void setStatus(TaskStatus status) {
         this.status = status;
     }
