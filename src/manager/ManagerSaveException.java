@@ -1,8 +1,7 @@
 package manager;
 
-import java.io.IOException;
-
-public class ManagerSaveException extends IOException {
-    public ManagerSaveException() {
+public class ManagerSaveException extends RuntimeException {
+    public ManagerSaveException(String errorMessage) {
+        super(errorMessage);
     }
 }

@@ -9,7 +9,6 @@ import java.io.Writer;
 import java.nio.file.Files;
 
 import java.io.File;
-import java.util.Optional;
 
 public class FileBackedTaskManager extends InMemoryTaskManager implements TaskManager {
     File file;
@@ -22,7 +21,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
             String[] lines = fileContent.split("\n");
 
             for (int i = 1; i < lines.length; i++) {
-                Task task = manager.fromString(lines[i]);
+                Task task = CsvParser.fromString(lines[i], manager);
 
                 switch (task.getType()) {
                     case TASK:
@@ -39,7 +38,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
                 }
             }
         } catch (IOException exception) {
-            throw new ManagerSaveException();
+            throw new ManagerSaveException("Save exception");
         }
 
         return manager;
@@ -117,86 +116,27 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         save();
     }
 
-    public void save() {
+    public void save() throws ManagerSaveException {
         try {
             Writer fileWriter = new FileWriter(file.getName());
             String header = "id,type,name,status,description,epic\n";
             fileWriter.write(header);
 
             for (Task task : tasks.values()) {
-                fileWriter.write(toString(task));
+                fileWriter.write(CsvParser.toString(task, epics));
             }
 
             for (Subtask subtask : subtasks.values()) {
-                fileWriter.write(toString(subtask));
+                fileWriter.write(CsvParser.toString(subtask, epics));
             }
 
             for (Epic epic : epics.values()) {
-                fileWriter.write(toString(epic));
+                fileWriter.write(CsvParser.toString(epic, epics));
             }
 
             fileWriter.close();
         } catch (IOException exception) {
-            System.out.println(exception.getMessage());
-        }
-    }
-
-    public String toString(Task task) {
-        TaskType type = task.getType();
-
-        switch (type) {
-            case TASK, EPIC:
-                return task.getId() + "," + task.getType() + "," + task.getName() + "," + task.getStatus() + "," + task.getDescription() + ",\n";
-            case SUBTASK:
-                Subtask subtask = (Subtask) task;
-                Epic subtaskEpic = epics.get(subtask.getEpicId());
-                String epicName = subtaskEpic != null ? subtaskEpic.getName() : "";
-
-                return subtask.getId() + "," + subtask.getType() + "," + subtask.getName() + "," + task.getStatus() + "," + subtask.getDescription() + "," + epicName + "\n";
-            default:
-                return "";
-        }
-    }
-
-    public Task fromString(String value) {
-        String[] split = value.split(",");
-        int id = Integer.parseInt(split[0]);
-        TaskType taskType = TaskType.valueOf(split[1]);
-        String name = split[2];
-        TaskStatus status = TaskStatus.valueOf(split[3]);
-        String description = split[4];
-        int epicId = -1;
-        try {
-            String epicName = split[5];
-            Optional<Epic> optionalEpic = epics.values().stream().filter(epic -> epic.getName().equals(epicName)).findFirst();
-
-            if (optionalEpic.isPresent()) {
-                epicId = optionalEpic.get().getId();
-            }
-
-        } catch (ArrayIndexOutOfBoundsException exception) {
-            epicId = 0;
-        }
-
-        switch (taskType) {
-            case TaskType.TASK: {
-                Task task = new Task(name, description, status);
-                task.setId(id);
-                return task;
-            }
-            case TaskType.SUBTASK: {
-                Subtask subtask = new Subtask(name, description, epicId, status);
-                subtask.setId(id);
-                return subtask;
-            }
-            case TaskType.EPIC: {
-                Epic epic = new Epic(name, description, status);
-                epic.setId(id);
-                return epic;
-            }
-            default: {
-                return null;
-            }
+            throw new ManagerSaveException("Save exception");
         }
     }
 }
