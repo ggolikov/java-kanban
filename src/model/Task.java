@@ -2,7 +2,6 @@ package model;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.Objects;
 
 public class Task implements Comparable<Task> {
@@ -22,6 +21,11 @@ public class Task implements Comparable<Task> {
         this.startTime = LocalDateTime.now();
     }
 
+    public Task(String name, String description, LocalDateTime startTime, Duration duration) {
+        this(name, description, duration);
+        this.startTime = startTime;
+    }
+
     public Task(String name, String description, Duration duration) {
         this(name, description);
         this.duration = duration;
@@ -32,8 +36,8 @@ public class Task implements Comparable<Task> {
         this.status = status;
     }
 
-    public Task(String name, String description, Duration duration, TaskStatus status) {
-        this(name, description, duration);
+    public Task(String name, String description, LocalDateTime startTime, Duration duration, TaskStatus status) {
+        this(name, description, startTime, duration);
         this.status = status;
     }
 

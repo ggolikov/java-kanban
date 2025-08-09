@@ -1,4 +1,3 @@
-import manager.FileBackedTaskManager;
 import manager.ManagerSaveException;
 import manager.Managers;
 import manager.TaskManager;
@@ -7,12 +6,11 @@ import model.Subtask;
 import model.Epic;
 import model.TaskStatus;
 
-import java.io.File;
 import java.time.Duration;
 
 public class Main {
     public static void main(String[] args) throws ManagerSaveException {
-        File file = new File("test.csv");
+        // File file = new File("test.csv");
         // FileBackedTaskManager m = FileBackedTaskManager.loadFromFile(file, Managers.getDefaultHistory());
         // testTaskManager(m);
         testTaskManager(Managers.getDefault());
@@ -50,27 +48,27 @@ public class Main {
     }
 
     private static void printAllTasks(TaskManager manager) {
-//        System.out.println("Задачи:");
-//        for (Task task : manager.getTasks()) {
-//            System.out.println(task);
-//        }
-//        System.out.println("Эпики:");
-//        for (Epic epic : manager.getEpics()) {
-//            System.out.println(epic);
-//
-//            for (Task task : manager.getEpicSubtasks(epic)) {
-//                System.out.println("--> " + task);
-//            }
-//        }
-//        System.out.println("Подзадачи:");
-//        for (Task subtask : manager.getSubtasks()) {
-//            System.out.println(subtask);
-//        }
-//
-//        System.out.println("История:");
-//        for (Task task : manager.getHistory()) {
-//            System.out.println(task);
-//        }
+        System.out.println("Задачи:");
+        for (Task task : manager.getTasks()) {
+            System.out.println(task);
+        }
+        System.out.println("Эпики:");
+        for (Epic epic : manager.getEpics()) {
+            System.out.println(epic);
+
+            for (Task task : manager.getEpicSubtasks(epic)) {
+                System.out.println("--> " + task);
+            }
+        }
+        System.out.println("Подзадачи:");
+        for (Task subtask : manager.getSubtasks()) {
+            System.out.println(subtask);
+        }
+
+        System.out.println("История:");
+        for (Task task : manager.getHistory()) {
+            System.out.println(task);
+        }
 
         System.out.println("Сортированые задачи:");
         for (Task task : manager.getPrioritizedTasks()) {

@@ -4,7 +4,6 @@ import model.*;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Optional;
 import java.util.TreeMap;
 
@@ -34,12 +33,12 @@ public class CsvParser {
 
         switch (taskType) {
             case TaskType.TASK: {
-                Task task = new Task(name, description, status);
+                Task task = new Task(name, description, startTime, duration, status);
                 task.setId(id);
                 return task;
             }
             case TaskType.SUBTASK: {
-                Subtask subtask = new Subtask(name, description, epicId, status);
+                Subtask subtask = new Subtask(name, description, epicId, startTime, duration, status);
                 subtask.setId(id);
                 return subtask;
             }
