@@ -1,11 +1,16 @@
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+
 import static org.junit.jupiter.api.Assertions.*;
+
 import manager.Managers;
 import manager.TaskManager;
 import model.Task;
 import model.Subtask;
 import model.Epic;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 class InMemoryTaskManagerTest {
     private TaskManager taskManager;
@@ -17,8 +22,10 @@ class InMemoryTaskManagerTest {
 
     @Test
     void tasksWithSameIdShouldBeEqual() {
-        Task task1 = new Task("Task 1", "Task 1");
-        Task task2 = new Task("Task 2", "Task 2");
+        LocalDateTime now = LocalDateTime.now();
+        Duration duration = Duration.ofHours(1);
+        Task task1 = new Task("Task 1", "Task 1", now, duration);
+        Task task2 = new Task("Task 2", "Task 2", now, duration);
 
         taskManager.addTask(task1);
         taskManager.addTask(task2);
