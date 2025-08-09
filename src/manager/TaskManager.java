@@ -1,6 +1,8 @@
 package manager;
 
 import java.util.ArrayList;
+import java.util.List;
+
 import model.Task;
 import model.Subtask;
 import model.Epic;
@@ -46,5 +48,14 @@ public interface TaskManager {
 
     ArrayList<Subtask> getEpicSubtasks(Epic epic);
 
-    public ArrayList<Task> getHistory();
+    void setEpicDuration(Epic epic);
+
+    ArrayList<Task> getHistory();
+
+    List<Task> getPrioritizedTasks();
+
+    boolean arwTasksOverlapping(Task task1, Task task2);
+
+    boolean isTaskOverlapping(Task task);
+
 }

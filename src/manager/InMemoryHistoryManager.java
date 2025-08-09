@@ -10,7 +10,6 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void add(Task task) {
-        System.out.println(task);
         if (task != null) {
             history.linkLast(task);
         }
