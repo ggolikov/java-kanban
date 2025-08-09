@@ -1,7 +1,8 @@
 package manager;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.*;
 
 import model.Task;
 import model.Subtask;
@@ -10,9 +11,9 @@ import model.TaskStatus;
 
 public class InMemoryTaskManager implements TaskManager {
     private final HistoryManager historyManager;
-    protected final HashMap<Integer, Task> tasks = new HashMap<>();
-    protected final HashMap<Integer, Subtask> subtasks = new HashMap<>();
-    protected final HashMap<Integer, Epic> epics = new HashMap<>();
+    protected final TreeMap<Integer, Task> tasks = new TreeMap<>();
+    protected final TreeMap<Integer, Subtask> subtasks = new TreeMap<>();
+    protected final TreeMap<Integer, Epic> epics = new TreeMap<>();
     protected int taskCount = 0;
 
     public InMemoryTaskManager(HistoryManager historyManager) {
@@ -47,8 +48,12 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void addTask(Task task) {
-        task.setId(getTaskId());
-        tasks.put(task.getId(), task);
+        boolean isTaskOverlapping = isTaskOverlapping(task);
+
+        if (!isTaskOverlapping) {
+            task.setId(getTaskId());
+            tasks.put(task.getId(), task);
+        }
     }
 
     @Override
@@ -99,10 +104,14 @@ public class InMemoryTaskManager implements TaskManager {
         Epic subtaskEpic = epics.get(subtask.getEpicId());
 
         if (subtaskEpic != null) {
-            subtask.setId(getTaskId());
-            subtasks.put(subtask.getId(), subtask);
-            subtaskEpic.getSubtasks().add(subtask.getId());
-            updateEpicAfterSubtasksChange(subtaskEpic);
+            boolean isSubtaskOverlapping = isTaskOverlapping(subtask);
+
+            if (!isSubtaskOverlapping) {
+                subtask.setId(getTaskId());
+                subtasks.put(subtask.getId(), subtask);
+                subtaskEpic.getSubtasks().add(subtask.getId());
+                updateEpicAfterSubtasksChange(subtaskEpic);
+            }
         }
     }
 
@@ -210,8 +219,30 @@ public class InMemoryTaskManager implements TaskManager {
         Epic updatedEpic = new Epic(epic.getName(), epic.getDescription(), epicSubtasksStatus);
         updatedEpic.setId(epic.getId());
         updatedEpic.setSubtasks(epic.getSubtasks());
-
+        setEpicDuration(updatedEpic);
         updateEpic(updatedEpic);
+    }
+
+    public void setEpicDuration(Epic epic) {
+        ArrayList<Subtask> subtasks = getEpicSubtasks(epic);
+        LocalDateTime epicStartTime = LocalDateTime.now();
+        LocalDateTime epicEndTime = LocalDateTime.now();
+
+        for (Subtask subtask : subtasks) {
+            if (subtask.getStartTime().isBefore(epicStartTime)) {
+                epicEndTime = subtask.getStartTime();
+            }
+
+            if (subtask.getEndTime().isAfter(epicEndTime)) {
+                epicEndTime = subtask.getEndTime();
+            }
+        }
+
+        Duration duration = Duration.between(epicStartTime, epicEndTime);
+
+        epic.setStartTime(epicStartTime);
+        epic.setDuration(duration);
+        epic.setEndTime(epicEndTime);
     }
 
     public TaskStatus getSubtasksStatus(ArrayList<Subtask> subtasks) {
@@ -237,5 +268,43 @@ public class InMemoryTaskManager implements TaskManager {
         }
 
         return TaskStatus.IN_PROGRESS;
+    }
+
+    public List<Task> getPrioritizedTasks() {
+        TreeSet<Task> prioritizedTasks = new TreeSet<>();
+
+        tasks.values().forEach(task -> {
+            if (task.getStartTime() != null) {
+                prioritizedTasks.add(task);
+            }
+        });
+
+        subtasks.values().forEach(subtask -> {
+            if (subtask.getStartTime() != null) {
+                prioritizedTasks.add(subtask);
+            }
+        });
+
+        return prioritizedTasks.stream().toList();
+    }
+
+    public boolean arwTasksOverlapping(Task task1, Task task2) {
+        LocalDateTime task1StartTime = task1.getStartTime();
+        LocalDateTime task2StartTime = task2.getStartTime();
+        LocalDateTime task1EndTime = task1.getEndTime();
+        LocalDateTime task2EndTime = task2.getEndTime();
+
+        if (task1StartTime.isBefore(task2StartTime)) {
+            return task1EndTime.isAfter(task2StartTime);
+        } else {
+            return task2EndTime.isBefore(task1EndTime);
+        }
+    }
+
+    @Override
+    public boolean isTaskOverlapping(Task task) {
+        List<Task> overlappedTasks = getPrioritizedTasks().stream().filter(existingTask -> arwTasksOverlapping(task, existingTask)).toList();
+
+        return !overlappedTasks.isEmpty();
     }
 }

@@ -2,8 +2,11 @@ package manager;
 
 import model.*;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.TreeMap;
 
 public class CsvParser {
     public static Task fromString(String value, TaskManager manager) {
@@ -13,9 +16,12 @@ public class CsvParser {
         String name = split[2];
         TaskStatus status = TaskStatus.valueOf(split[3]);
         String description = split[4];
+        LocalDateTime startTime = LocalDateTime.parse(split[5]);
+        Duration duration = Duration.parse(split[6]);
+
         int epicId = -1;
         try {
-            String epicName = split[5];
+            String epicName = split[7];
             Optional<Epic> optionalEpic = manager.getEpics().stream().filter(epic -> epic.getName().equals(epicName)).findFirst();
 
             if (optionalEpic.isPresent()) {
@@ -48,18 +54,18 @@ public class CsvParser {
         }
     }
 
-    public static String toString(Task task, HashMap<Integer, Epic> epics) {
+    public static String toString(Task task, TreeMap<Integer, Epic> epics) {
         TaskType type = task.getType();
 
         switch (type) {
             case TASK, EPIC:
-                return task.getId() + "," + task.getType() + "," + task.getName() + "," + task.getStatus() + "," + task.getDescription() + ",\n";
+                return task.getId() + "," + task.getType() + "," + task.getName() + "," + task.getStatus() + "," + task.getDescription() + "," + task.getStartTime() + "," + task.getDuration().toMinutes() + ",\n";
             case SUBTASK:
                 Subtask subtask = (Subtask) task;
                 Epic subtaskEpic = epics.get(subtask.getEpicId());
                 String epicName = subtaskEpic != null ? subtaskEpic.getName() : "";
 
-                return subtask.getId() + "," + subtask.getType() + "," + subtask.getName() + "," + task.getStatus() + "," + subtask.getDescription() + "," + epicName + "\n";
+                return subtask.getId() + "," + subtask.getType() + "," + subtask.getName() + "," + task.getStatus() + "," + subtask.getDescription() + "," + task.getStartTime() + "," + task.getDuration().toMinutes() + epicName + "\n";
             default:
                 return "";
         }

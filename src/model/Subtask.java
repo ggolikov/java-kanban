@@ -1,5 +1,7 @@
 package model;
 
+import java.time.Duration;
+
 public class Subtask extends Task {
     private int epicId;
 
@@ -12,6 +14,11 @@ public class Subtask extends Task {
         super(name, description);
         this.epicId = epicId;
         this.type = TaskType.SUBTASK;
+    }
+
+    public Subtask(String name, String description, int epicId, Duration duration) {
+        this(name, description, epicId);
+        this.duration = duration;
     }
 
     public Subtask(String name, String description, int epicId, TaskStatus status) {

@@ -119,7 +119,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
     public void save() throws ManagerSaveException {
         try {
             Writer fileWriter = new FileWriter(file.getName());
-            String header = "id,type,name,status,description,epic\n";
+            String header = "id,type,name,status,description,startTime,duration,epic\n";
             fileWriter.write(header);
 
             for (Task task : tasks.values()) {
