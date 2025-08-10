@@ -7,6 +7,7 @@ import model.Epic;
 import model.TaskStatus;
 
 import java.time.Duration;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws ManagerSaveException {
@@ -74,7 +75,5 @@ public class Main {
         for (Task task : manager.getPrioritizedTasks()) {
             System.out.println(task);
         }
-
-
     }
 }

@@ -5,7 +5,7 @@ import model.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.TreeMap;
+import java.util.HashMap;
 
 public class CsvParser {
     public static Task fromString(String value, TaskManager manager) {
@@ -53,7 +53,7 @@ public class CsvParser {
         }
     }
 
-    public static String toString(Task task, TreeMap<Integer, Epic> epics) {
+    public static String toString(Task task, HashMap<Integer, Epic> epics) {
         TaskType type = task.getType();
 
         switch (type) {
