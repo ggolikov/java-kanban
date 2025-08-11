@@ -2,8 +2,10 @@ package manager;
 
 import model.*;
 
-import java.util.HashMap;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.HashMap;
 
 public class CsvParser {
     public static Task fromString(String value, TaskManager manager) {
@@ -13,9 +15,12 @@ public class CsvParser {
         String name = split[2];
         TaskStatus status = TaskStatus.valueOf(split[3]);
         String description = split[4];
+        LocalDateTime startTime = LocalDateTime.parse(split[5]);
+        Duration duration = Duration.parse(split[6]);
+
         int epicId = -1;
         try {
-            String epicName = split[5];
+            String epicName = split[7];
             Optional<Epic> optionalEpic = manager.getEpics().stream().filter(epic -> epic.getName().equals(epicName)).findFirst();
 
             if (optionalEpic.isPresent()) {
@@ -28,12 +33,12 @@ public class CsvParser {
 
         switch (taskType) {
             case TaskType.TASK: {
-                Task task = new Task(name, description, status);
+                Task task = new Task(name, description, startTime, duration, status);
                 task.setId(id);
                 return task;
             }
             case TaskType.SUBTASK: {
-                Subtask subtask = new Subtask(name, description, epicId, status);
+                Subtask subtask = new Subtask(name, description, epicId, startTime, duration, status);
                 subtask.setId(id);
                 return subtask;
             }
@@ -53,13 +58,13 @@ public class CsvParser {
 
         switch (type) {
             case TASK, EPIC:
-                return task.getId() + "," + task.getType() + "," + task.getName() + "," + task.getStatus() + "," + task.getDescription() + ",\n";
+                return task.getId() + "," + task.getType() + "," + task.getName() + "," + task.getStatus() + "," + task.getDescription() + "," + task.getStartTime() + "," + task.getDuration().toMinutes() + ",\n";
             case SUBTASK:
                 Subtask subtask = (Subtask) task;
                 Epic subtaskEpic = epics.get(subtask.getEpicId());
                 String epicName = subtaskEpic != null ? subtaskEpic.getName() : "";
 
-                return subtask.getId() + "," + subtask.getType() + "," + subtask.getName() + "," + task.getStatus() + "," + subtask.getDescription() + "," + epicName + "\n";
+                return subtask.getId() + "," + subtask.getType() + "," + subtask.getName() + "," + task.getStatus() + "," + subtask.getDescription() + "," + task.getStartTime() + "," + task.getDuration().toMinutes() + epicName + "\n";
             default:
                 return "";
         }
