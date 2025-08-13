@@ -2,8 +2,8 @@ package handler;
 
 import com.google.gson.*;
 import com.sun.net.httpserver.HttpExchange;
-import Adapter.DurationTypeAdapter;
-import Adapter.LocalDateTimeAdapter;
+import adapter.DurationTypeAdapter;
+import adapter.LocalDateTimeAdapter;
 import manager.ManagerSaveException;
 import manager.TaskManager;
 import model.Epic;
@@ -17,7 +17,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 
 public class BaseHttpHandler {
     protected TaskManager taskManager;
