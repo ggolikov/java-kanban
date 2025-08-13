@@ -36,9 +36,12 @@ class InMemoryTaskManagerTest {
 
     @Test
     void subTasksWithSameIdShouldBeEqual() {
-        Subtask subtask1 = new Subtask("Subtask 1", "Subtask 1");
-        Subtask subtask2 = new Subtask("Subtask 2", "Subtask 2");
+        Epic epic = new Epic("Epic 1", "Epic 1");
+        epic.setId(1);
+        Subtask subtask1 = new Subtask("Subtask 1", "Subtask 1", epic.getId());
+        Subtask subtask2 = new Subtask("Subtask 2", "Subtask 2", epic.getId());
 
+        taskManager.addEpic(epic);
         taskManager.addSubtask(subtask1);
         taskManager.addSubtask(subtask2);
         subtask2.setId(subtask1.getId());
