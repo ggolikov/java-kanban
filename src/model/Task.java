@@ -10,8 +10,8 @@ public class Task {
     private int id;
     protected TaskType type;
     public TaskStatus status;
-    protected Duration duration;
-    protected LocalDateTime startTime;
+    public Duration duration;
+    public LocalDateTime startTime;
 
     public Task(String name, String description) {
         this.name = name;
@@ -19,6 +19,7 @@ public class Task {
         this.status = TaskStatus.NEW;
         this.type = TaskType.TASK;
         this.startTime = LocalDateTime.now();
+        this.duration = Duration.ofSeconds(0);
     }
 
     public Task(String name, String description, LocalDateTime startTime, Duration duration) {

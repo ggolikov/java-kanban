@@ -114,7 +114,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void addSubtask(Subtask subtask) {
+    public void addSubtask(Subtask subtask) throws ManagerSaveException {
         Epic subtaskEpic = epics.get(subtask.getEpicId());
 
         if (subtaskEpic != null) {
@@ -127,6 +127,8 @@ public class InMemoryTaskManager implements TaskManager {
                 subtaskEpic.getSubtasks().add(subtask.getId());
                 updateEpicAfterSubtasksChange(subtaskEpic);
             }
+        } else {
+            throw new ManagerSaveException("Subtask epic does not exist");
         }
     }
 
