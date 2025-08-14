@@ -1,9 +1,8 @@
-package handler;
+package http.handler;
 
 import com.google.gson.*;
 import com.sun.net.httpserver.HttpExchange;
-import adapter.DurationTypeAdapter;
-import adapter.LocalDateTimeAdapter;
+import http.HttpTaskServer;
 import manager.ManagerSaveException;
 import manager.TaskManager;
 import model.Epic;
@@ -14,52 +13,22 @@ import model.TaskType;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-public class BaseHttpHandler {
+public class CommonTaskHandler extends BaseHttpHandler {
     protected TaskManager taskManager;
+    protected Gson gson;
 
-    public BaseHttpHandler(TaskManager taskManager) {
+    protected static String[] getRequestPathParts(HttpExchange h) {
+        String path = h.getRequestURI().getPath();
+        return path.split("/");
+    }
+
+    public CommonTaskHandler(TaskManager taskManager) {
+        super();
         this.taskManager = taskManager;
-    }
 
-    protected void sendText(HttpExchange h, String text) throws IOException {
-        byte[] resp = text.getBytes(StandardCharsets.UTF_8);
-        h.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
-        h.sendResponseHeaders(200, resp.length);
-        h.getResponseBody().write(resp);
-        h.close();
-    }
-
-    protected void sendNotFound(HttpExchange h, TaskType taskType, int id) throws IOException {
-        String text = taskType + " with id " + id + " Not Found";
-        byte[] resp = text.getBytes(StandardCharsets.UTF_8);
-        h.sendResponseHeaders(404, 0);
-        h.getResponseBody().write(resp);
-        h.close();
-    }
-
-    protected void sendInternalError(HttpExchange h, String text) throws IOException {
-        byte[] resp = text.getBytes(StandardCharsets.UTF_8);
-        h.getResponseHeaders().add("Content-Type", "application/json;charset=utf-8");
-        h.sendResponseHeaders(503, resp.length);
-        h.getResponseBody().write(resp);
-        h.close();
-    }
-
-    protected void sendHasOverlaps() {
-
-    }
-
-    protected Gson setupGson() {
-        return new GsonBuilder()
-                .serializeNulls()
-                .setPrettyPrinting()
-                .registerTypeAdapter(Duration.class, new DurationTypeAdapter())
-                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-                .create();
+        this.gson = HttpTaskServer.gson;
     }
 
     protected JsonElement parseRequestBody(HttpExchange h) throws IOException {
@@ -74,15 +43,8 @@ public class BaseHttpHandler {
         return jsonElement;
     }
 
-    protected String[] getRequestPathParts(HttpExchange h) {
-        String path = h.getRequestURI().getPath();
-        return path.split("/");
-    }
-
     protected void handleGetEntity(HttpExchange h, TaskType taskType) throws IOException {
         String[] pathParts = getRequestPathParts(h);
-
-        Gson gson = setupGson();
 
         if (pathParts.length == 3) {
             try {
@@ -102,7 +64,7 @@ public class BaseHttpHandler {
                     sendNotFound(h, taskType, id);
                 }
             } catch (NumberFormatException e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
             }
         } else {
             try {
@@ -112,14 +74,12 @@ public class BaseHttpHandler {
                     case EPIC -> sendText(h, gson.toJson(taskManager.getEpics()));
                 }
             } catch (RuntimeException e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
             }
         }
     }
 
     protected void handlePostEntity(HttpExchange h, TaskType taskType) throws IOException {
-        Gson gson = setupGson();
-
         JsonElement jsonElement = parseRequestBody(h);
         JsonObject jsonObject = jsonElement.getAsJsonObject();
         JsonElement parsedId = jsonObject.get("id");
@@ -167,7 +127,7 @@ public class BaseHttpHandler {
         }
     }
 
-    protected void addOrUpdateEntity(Task taskDeserialized, TaskType taskType, String command) throws IOException {
+    protected void addOrUpdateEntity(Task taskDeserialized, TaskType taskType, String command) {
         switch (taskType) {
             case TASK -> {
                 if (command.equals("add")) {
@@ -196,8 +156,6 @@ public class BaseHttpHandler {
     protected void handleDeleteEntity(HttpExchange h, TaskType taskType) throws IOException {
         String[] pathParts = getRequestPathParts(h);
 
-        Gson gson = setupGson();
-
         if (pathParts.length == 3) {
             try {
                 int id = Integer.parseInt(pathParts[2]);
@@ -220,10 +178,8 @@ public class BaseHttpHandler {
                 } else {
                     sendNotFound(h, taskType, id);
                 }
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            } catch (ManagerSaveException e) {
-                e.printStackTrace();
+            } catch (NumberFormatException | ManagerSaveException e) {
+                System.out.println(e.getMessage());
             }
         } else {
             sendText(h, gson.toJson(taskManager.getTasks()));

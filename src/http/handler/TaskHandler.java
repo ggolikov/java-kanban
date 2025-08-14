@@ -1,4 +1,4 @@
-package handler;
+package http.handler;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -7,8 +7,8 @@ import model.TaskType;
 
 import java.io.IOException;
 
-public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
-    public SubtaskHandler(TaskManager taskManager) {
+public class TaskHandler extends CommonTaskHandler implements HttpHandler {
+    public TaskHandler(TaskManager taskManager) {
         super(taskManager);
     }
 
@@ -17,9 +17,9 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
         String method = h.getRequestMethod();
 
         switch (method) {
-            case "GET" -> handleGetEntity(h, TaskType.SUBTASK);
-            case "POST" -> handlePostEntity(h, TaskType.SUBTASK);
-            case "DELETE" -> handleDeleteEntity(h, TaskType.SUBTASK);
+            case "GET" -> handleGetEntity(h, TaskType.TASK);
+            case "POST" -> handlePostEntity(h, TaskType.TASK);
+            case "DELETE" -> handleDeleteEntity(h, TaskType.TASK);
         }
     }
 }

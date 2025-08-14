@@ -1,4 +1,4 @@
-package handler;
+package http.handler;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
@@ -7,22 +7,21 @@ import manager.TaskManager;
 import model.Task;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.ArrayList;
 
-public class PrioritizedTasksHandler extends BaseHttpHandler implements HttpHandler {
-    public PrioritizedTasksHandler(TaskManager taskManager) {
+public class HistoryHandler extends CommonTaskHandler implements HttpHandler {
+    public HistoryHandler(TaskManager taskManager) {
         super(taskManager);
     }
 
     @Override
     public void handle(HttpExchange h) throws IOException {
         String method = h.getRequestMethod();
-        Gson gson = setupGson();
 
         if (method.equals("GET")) {
-            List<Task> prioritizedTasks = taskManager.getPrioritizedTasks();
+            ArrayList<Task> history = taskManager.getHistory();
 
-            sendText(h, gson.toJson(prioritizedTasks));
+            sendText(h, gson.toJson(history));
         }
     }
 }

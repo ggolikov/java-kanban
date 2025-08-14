@@ -1,8 +1,9 @@
-package handler;
+package http.handler;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import http.HttpTaskServer;
 import manager.TaskManager;
 import model.Epic;
 import model.Subtask;
@@ -11,7 +12,7 @@ import model.TaskType;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class EpicHandler extends BaseHttpHandler implements HttpHandler {
+public class EpicHandler extends CommonTaskHandler implements HttpHandler {
     public EpicHandler(TaskManager taskManager) {
         super(taskManager);
     }
@@ -20,9 +21,7 @@ public class EpicHandler extends BaseHttpHandler implements HttpHandler {
     public void handle(HttpExchange h) throws IOException {
         String method = h.getRequestMethod();
         String[] pathParts = getRequestPathParts(h);
-
-        Gson gson = setupGson();
-
+        
         switch (method) {
             case "GET" -> {
                 if (pathParts.length == 4) {
