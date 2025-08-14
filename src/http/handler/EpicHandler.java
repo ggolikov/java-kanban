@@ -1,9 +1,7 @@
 package http.handler;
 
-import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import http.HttpTaskServer;
 import manager.TaskManager;
 import model.Epic;
 import model.Subtask;
@@ -21,7 +19,7 @@ public class EpicHandler extends CommonTaskHandler implements HttpHandler {
     public void handle(HttpExchange h) throws IOException {
         String method = h.getRequestMethod();
         String[] pathParts = getRequestPathParts(h);
-        
+
         switch (method) {
             case "GET" -> {
                 if (pathParts.length == 4) {
